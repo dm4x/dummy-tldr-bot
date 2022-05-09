@@ -1,11 +1,10 @@
 package ru.dm4x.dummy_tldr_bot.botLogic
 
 import cats.Functor
-import fs2.async.Ref
+import cats.effect.concurrent.Ref
 import cats.implicits._
 import ru.dm4x.dummy_tldr_bot.api.ChatId
 
-import scala.language.higherKinds
 import scala.util.Random
 
 /**
@@ -63,7 +62,7 @@ class InMemoryTodoListStorage[F[_] : Functor](
       "Я не знаю, что тебе от меня надо, но я точно знаю, что ты озорник",
       "Опять душат, откройте форточку"
     )
-    ref.setAsync(jokes)
+    ref.set(jokes)
   }
 
   def randomJoke(chatId: ChatId): F[Item] = {

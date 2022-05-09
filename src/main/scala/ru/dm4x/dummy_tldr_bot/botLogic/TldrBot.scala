@@ -1,14 +1,12 @@
 package ru.dm4x.dummy_tldr_bot.botLogic
 
-import _root_.io.chrisdavenport.log4cats._
 import cats.effect.Sync
 import cats.implicits._
 import fs2._
+import org.typelevel.log4cats._
 import ru.dm4x.dummy_tldr_bot.api._
 import ru.dm4x.dummy_tldr_bot.api.dto.BotMessage
 import ru.dm4x.dummy_tldr_bot.botLogic.BotCommand._
-
-import scala.language.higherKinds
 
 /**
   * Tldr telegram bot
