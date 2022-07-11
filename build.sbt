@@ -4,6 +4,7 @@ val log4CatsVersion = "1.3.0"
 val slf4jVersion = "1.7.30"
 val kindProjectorVersion = "0.11.3"
 val circeVersion = "0.12.3"
+val doobieVersion = "0.9.0"
 
 lazy val root = (project in file("."))
   .settings(
@@ -32,6 +33,9 @@ lazy val root = (project in file("."))
       compilerPlugin(("org.typelevel" %% "kind-projector" % kindProjectorVersion).cross(CrossVersion.full)),
       "org.http4s" %% "http4s-blaze-client" % http4sVersion,
       "org.http4s" %% "http4s-circe" % http4sVersion,
+      "org.tpolecat" %% "doobie-core" % doobieVersion,
+      "org.tpolecat" %% "doobie-h2" % doobieVersion,
+      "org.tpolecat" %% "doobie-hikari" % doobieVersion,
       "io.circe" %% "circe-core" % circeVersion,
       "io.circe" %% "circe-generic" % circeVersion,
       "org.typelevel" %% "log4cats-core" % log4CatsVersion,
