@@ -18,7 +18,7 @@ trait TldrBotStorage[F[_]] {
   * Simple in-memory implementation of [[TldrBotStorage]] algebra, using [[Ref]].
   * In real world this would go to some database of sort.
   */
-class InMemoryTodoListStorage[F[_] : Functor](
+class InMemoryTldrBotStorage[F[_] : Functor](
   private val ref: Ref[F, List[Item]]) extends TldrBotStorage[F] {
 
   def fillStorage: F[Unit] = {

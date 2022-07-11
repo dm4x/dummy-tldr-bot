@@ -28,10 +28,7 @@ class TldrBotProcess[F[_]](token: String)(implicit F: ConcurrentEffect[F]) {
     BlazeClientBuilder[F](ExecutionContext.global).stream.flatMap { client =>
       val streamF: F[Stream[F, Unit]] = for {
         logger <- Slf4jLogger.create[F]
-        storage <-
-          Ref
-            .of(List.empty[Item])
-            .map(new InMemoryTodoListStorage(_))
+        storage <- Ref.of(List.empty[Item]).map(new InMemoryTldrBotStorage(_))
         botAPI <- F.delay(new Http4SBotAPI(token, client, logger))
         tldrBot <- F.delay(new TldrBot(botAPI, storage, logger))
       } yield tldrBot.launch

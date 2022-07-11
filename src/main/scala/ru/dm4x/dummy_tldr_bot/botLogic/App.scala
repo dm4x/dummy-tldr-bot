@@ -7,7 +7,7 @@ object App extends IOApp {
 
   def stream: Stream[IO, ExitCode] =
     for {
-      token <- Stream.eval(IO(System.getenv("TODOLIST_BOT_TOKEN")))
+      token <- Stream.eval(IO(System.getenv("BOT_TOKEN")))
       exitCode <-
         new TldrBotProcess[IO](token).run.last.map(_ => ExitCode.Success)
     } yield exitCode
