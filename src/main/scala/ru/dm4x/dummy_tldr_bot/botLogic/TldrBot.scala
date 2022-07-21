@@ -18,7 +18,7 @@ import ru.dm4x.dummy_tldr_bot.botLogic.BotCommand._
   */
 class TldrBot[F[_]](
   api: StreamingBotAPI[F],
-  storage: TldrBotStorage[F],
+  storage: TldrDbStorage[F],
   logger: Logger[F])(
   implicit F: Sync[F]) {
 

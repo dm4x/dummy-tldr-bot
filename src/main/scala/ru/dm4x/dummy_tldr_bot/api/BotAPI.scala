@@ -6,7 +6,7 @@ import fs2.Stream
 import org.http4s.client.Client
 import org.http4s.{EntityDecoder, Uri}
 import org.typelevel.log4cats.Logger
-import ru.dm4x.dummy_tldr_bot.api.dto.{BotResponse, BotUpdate}
+import ru.dm4x.dummy_tldr_bot.api.dto.{BotResponse, BotResult}
 
 /**
   * Simplified bot api algebra that exposes only APIs required for this project
@@ -26,7 +26,7 @@ trait BotAPI[F[_], S[_]] {
     *
     * @param fromOffset offset of the fist message to start polling from
     */
-  def pollUpdates(fromOffset: Offset): S[BotUpdate]
+  def pollUpdates(fromOffset: Offset): S[BotResult]
 }
 
 trait StreamingBotAPI[F[_]] extends BotAPI[F, Stream[F, *]]
@@ -45,7 +45,7 @@ class Http4SBotAPI[F[_]](
   logger: Logger[F])(
   implicit
   F: Sync[F],
-  D: EntityDecoder[F, BotResponse[List[BotUpdate]]]) extends StreamingBotAPI[F] {
+  D: EntityDecoder[F, BotResponse[List[BotResult]]]) extends StreamingBotAPI[F] {
 
   private val botApiUri: Uri = Uri.uri("https://api.telegram.org") / s"bot$token"
 
@@ -61,12 +61,12 @@ class Http4SBotAPI[F[_]](
     client.expect[Unit](uri) // run the http request and ignore the result body.
   }
 
-  def pollUpdates(fromOffset: Offset): Stream[F, BotUpdate] =
+  def pollUpdates(fromOffset: Offset): Stream[F, BotResult] =
     Stream(()).repeat.covary[F]
       .evalMapAccumulate(fromOffset) { case (offset, _) => requestUpdates(offset) }
       .flatMap { case (_, response) => Stream.emits(response.result) }
 
-  private def requestUpdates(offset: Offset): F[(Offset, BotResponse[List[BotUpdate]])] = {
+  private def requestUpdates(offset: Offset): F[(Offset, BotResponse[List[BotResult]])] = {
 
     val uri = botApiUri / "getUpdates" =? Map(
       "offset" -> List((offset + 1).toString),
@@ -74,7 +74,7 @@ class Http4SBotAPI[F[_]](
       "allowed_updates" -> List("""["message"]""")
     )
 
-    client.expect[BotResponse[List[BotUpdate]]](uri)
+    client.expect[BotResponse[List[BotResult]]](uri)
       .map(response => (lastOffset(response).getOrElse(offset), response))
       .recoverWith {
         case ex => logger.error(ex)("Failed to poll updates").as(offset -> BotResponse(ok = true, Nil))
@@ -82,7 +82,7 @@ class Http4SBotAPI[F[_]](
   }
 
   // just get the maximum id out of all received updates
-  private def lastOffset(response: BotResponse[List[BotUpdate]]): Option[Offset] =
+  private def lastOffset(response: BotResponse[List[BotResult]]): Option[Offset] =
     response.result match {
       case Nil => None
       case nonEmpty => Some(nonEmpty.maxBy(_.update_id).update_id)

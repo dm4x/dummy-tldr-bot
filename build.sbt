@@ -5,6 +5,7 @@ val slf4jVersion = "1.7.30"
 val kindProjectorVersion = "0.11.3"
 val circeVersion = "0.12.3"
 val doobieVersion = "0.9.0"
+val pureconfigVersion = "0.17.1"
 
 lazy val root = (project in file("."))
   .settings(
@@ -41,7 +42,8 @@ lazy val root = (project in file("."))
       "org.typelevel" %% "log4cats-core" % log4CatsVersion,
       "org.typelevel" %% "log4cats-slf4j" % log4CatsVersion,
       "org.slf4j" % "slf4j-simple" % slf4jVersion,
-      "org.specs2" %% "specs2-core" % specs2Version % "test"
+      "org.specs2" %% "specs2-core" % specs2Version % "test",
+      "com.github.pureconfig" %% "pureconfig" % pureconfigVersion
     )
   )
 
